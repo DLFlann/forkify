@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-const url = 'https://forkify-api.herokuapp.com';
+import { url } from '../config';
 
 export default class Search {
+
     constructor(query) {
         this.query = query;
     }
@@ -14,7 +15,7 @@ export default class Search {
             this.result = res.data.recipes;
             // console.log(this.result);
         } catch (error) {
-            alert(error);
+            console.log(error);
         }
     }
 }
