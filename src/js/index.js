@@ -72,4 +72,21 @@ elements.searchResPages.addEventListener('click', e => {
     }
 });
 
-['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe))
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
+
+elements.recipe.addEventListener('click', e => {
+    console.log(e.target);
+    if (e.target.matches('.btn-decrease, .btn-decrease *')) {
+        console.log('calling');
+        if (state.recipe.servings > 1) {
+            state.recipe.updateServings('dec');
+            updateServingsIngredients(state.recipe);
+        }
+    } else if (e.target.matches('.btn-increase, .btn-increase *')) {
+        console.log('calling');
+        state.recipe.updateServings('inc');
+        updateServingsIngredients(state.recipe);
+    }
+
+    console.log(state.recipe);
+});

@@ -117,3 +117,13 @@ const createIngredient = ingredient => `
         </div>
     </li>
 `;
+
+export const updateServingsIngredients = recipe => {
+    document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
+
+    const countElements = Array.from(document.querySelectorAll('.recipe__count'));
+
+    countElements.forEach((el, i) => {
+        el.textContent = formatCount(recipe.ingredients[i].count);
+    });
+};
