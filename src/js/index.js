@@ -1,7 +1,9 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
+import List from './models/List';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
+import * as listView from './views//listView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 const state = {};
@@ -57,6 +59,27 @@ const controlRecipe = async () => {
     }
 };
 
+const controlList = () => {
+    if (!state.list) state.list = new List();
+
+    state.recipe.ingredients.forEach(el => {
+        const item = state.list.addItem(el.count, el.unit, el.ingredient);
+        listView.renderItem(item);
+    });
+};
+
+elements.shopping.addEventListener('click', e => {
+    if (e.target.matches('.shopping__delete, .shopping__delete *')) {
+        const id = e.target.closest('.shopping__item').dataset.itemid;
+        state.list.deleteItem(id);
+        listView.deleteItem(id);
+    } else if (e.target.matches('.shopping__count-value')) {
+        const id = e.target.closest('.shopping__item').dataset.itemid;
+        const val = parseFloat(e.target.value, 10);
+        state.list.updateCount(id, val);
+    }
+});
+
 elements.searchForm.addEventListener('submit', e => {
     e.preventDefault();
     constrolSearch();
@@ -75,17 +98,19 @@ elements.searchResPages.addEventListener('click', e => {
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
 
 elements.recipe.addEventListener('click', e => {
-    console.log(e.target);
+
     if (e.target.matches('.btn-decrease, .btn-decrease *')) {
-        console.log('calling');
+
         if (state.recipe.servings > 1) {
             state.recipe.updateServings('dec');
-            updateServingsIngredients(state.recipe);
+            recipeView.updateServingsIngredients(state.recipe);
         }
     } else if (e.target.matches('.btn-increase, .btn-increase *')) {
-        console.log('calling');
+
         state.recipe.updateServings('inc');
-        updateServingsIngredients(state.recipe);
+        recipeView.updateServingsIngredients(state.recipe);
+    } else if (e.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
+        controlList();
     }
 
     console.log(state.recipe);
