@@ -22,7 +22,7 @@ export const clearResults = () => {
 export const highlightSelected = id => {
     const resultsArr = Array.from(document.querySelectorAll('.results__link'));
     resultsArr.forEach(el => el.classList.remove('results__link--active'));
-    document.querySelector(`a[href*="#${ id }"]`).classList.add('results__link--active');
+    document.querySelector(`.results__link[href*="#${ id }"]`).classList.add('results__link--active');
 };
 
 const renderRecipe = recipe => {
@@ -43,7 +43,7 @@ const renderRecipe = recipe => {
     elements.searchResList.insertAdjacentHTML('beforeend', markup);
 };
 
-const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 17) => {
 
     if (title.lenth <= 17) return title;
 

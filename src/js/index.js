@@ -1,9 +1,11 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import List from './models/List';
+import Likes from './models/Likes';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView from './views//listView';
+import * as likesView from './views/likesView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 const state = {};
@@ -51,7 +53,7 @@ const controlRecipe = async () => {
 
             clearLoader();
 
-            recipeView.renderRecipe(state.recipe);
+            recipeView.renderRecipe(state.recipe, state.likes.isLiked(id));
 
         } catch (error) {
             alert('Something went wrong :(');
@@ -66,6 +68,29 @@ const controlList = () => {
         const item = state.list.addItem(el.count, el.unit, el.ingredient);
         listView.renderItem(item);
     });
+};
+
+const controlLike = () => {
+    if (!state.likes) state.likes = new Likes();
+
+    const currentID = state.recipe.id;
+
+    if (!state.likes.isLiked(currentID)) {
+        const newLike = state.likes.addLike(
+            currentID,
+            state.recipe.title,
+            state.recipe.author,
+            state.recipe.img
+        );
+
+        likesView.renderLike(newLike);
+    } else {
+        state.likes.deleteLike(currentID);
+        likesView.deleteLike(currentID);
+    }
+
+    likesView.toggleLikeBtn(state.likes.isLiked(currentID));
+    likesView.toggleLikeMenu(state.likes.getNumLikes());
 };
 
 elements.shopping.addEventListener('click', e => {
@@ -110,8 +135,18 @@ elements.recipe.addEventListener('click', e => {
         state.recipe.updateServings('inc');
         recipeView.updateServingsIngredients(state.recipe);
     } else if (e.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
-        controlList();
-    }
 
-    console.log(state.recipe);
+        controlList();
+    } else if (e.target.matches('.recipe__love, .recipe__love *')) {
+
+        controlLike();
+    }
+});
+
+window.addEventListener('load', () => {
+    state.likes = new Likes();
+    state.likes.readStorage();
+    likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+    state.likes.likes.forEach(like => likesView.renderLike(like));
 });
